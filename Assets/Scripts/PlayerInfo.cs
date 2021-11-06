@@ -6,13 +6,14 @@ using UnityEngine.Events;
 
 public class PlayerInfo : MonoBehaviour
 {
-    [SerializeField] private int _maxHelth = 3;
+    [SerializeField] private int _maxHealth = 3;
 
     private int _health;
 
     public UnityEvent<int> HealthChanged;
+    public UnityEvent PlayerDied;
 
-    public int MaxHelth => _maxHelth;
+    public int MaxHelth => _maxHealth;
 
     public int Health
     {
@@ -23,13 +24,16 @@ public class PlayerInfo : MonoBehaviour
             {
                 _health = value;
                 HealthChanged?.Invoke(value);
+
+                if (_health == 0)
+                    PlayerDied?.Invoke();
             }
         }
     }
 
     private void Start()
     {
-        _health = _maxHelth;
+        _health = _maxHealth;
     }
 
     public void ApplyDamage(int dmg)
