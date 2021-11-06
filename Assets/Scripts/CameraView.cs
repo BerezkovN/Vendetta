@@ -10,6 +10,7 @@ public class CameraView : MonoBehaviour
     [SerializeField] private float _offsetY;
     // from 0% to 50%, (50% means that border line should have size 50% from screen)
     [SerializeField, Range(0, 0.5f)] private float _borderSize = 0.05f;
+    [SerializeField] private bool _canExpandBorders = false;
     [SerializeField] private Transform _target;
 
     private Camera _camera;
@@ -22,6 +23,12 @@ public class CameraView : MonoBehaviour
         set => _target = value;
     }
 
+    public bool CanExpandBorders
+    {
+        get => _canExpandBorders;
+        set => _canExpandBorders = value;
+    }
+
     private void Start()
     {
         _camera = GetComponent<Camera>();
@@ -32,15 +39,18 @@ public class CameraView : MonoBehaviour
         float edgeOffsetX = 0;
         float edgeOffsetY = 0;
 
-        float borderX = _borderSize * Screen.width;
-        float borderY = _borderSize * Screen.height;
-        
-        Vector3 mousePos = Input.mousePosition;
+        if (_canExpandBorders)
+        {
+            float borderX = _borderSize * Screen.width;
+            float borderY = _borderSize * Screen.height;
 
-        if (mousePos.x <= borderX || mousePos.x >= Screen.width - borderX)
-            edgeOffsetX = Screen.width / 2 > mousePos.x ? -1 : 1;
-        if (mousePos.y <= borderY || mousePos.y >= Screen.height - borderY)
-            edgeOffsetY = Screen.height / 2 > mousePos.y ? -1 : 1;
+            Vector3 mousePos = Input.mousePosition;
+
+            if (mousePos.x <= borderX || mousePos.x >= Screen.width - borderX)
+                edgeOffsetX = Screen.width / 2 > mousePos.x ? -1 : 1;
+            if (mousePos.y <= borderY || mousePos.y >= Screen.height - borderY)
+                edgeOffsetY = Screen.height / 2 > mousePos.y ? -1 : 1;
+        }
 
         if (_target)
         {
