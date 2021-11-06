@@ -21,8 +21,8 @@ public class PlayerInteractions : MonoBehaviour
                 _pressed = true;
                 _currentTarget.OnClick();
             }
-            else if (_pressed && Input.GetKey(_currentTarget.Key.KeyName))
-            {
+            else if (_pressed && !Input.GetButton(_currentTarget.Key.KeyName))
+            { 
                 _pressed = false;
                 _currentTarget.OnClickExit();
             }
