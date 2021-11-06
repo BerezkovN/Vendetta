@@ -38,8 +38,8 @@ public class CameraPathMover : MonoBehaviour
 [Serializable]
 public struct TransformDelay
 {
-    [SerializeField] public float Delay;
     [SerializeField] public Transform Transform;
+    [SerializeField] public float Delay;
 
     public override string ToString()
     {
