@@ -4,8 +4,8 @@ using UnityEngine;
 
 public class Interactable : MonoBehaviour
 {
-    [SerializeField] Key Key;
-    [SerializeField] GameObject? CreatedKey;
+    [SerializeField] public Key Key;
+    [SerializeField] private GameObject? CreatedKey;
 
     private bool _hidden = false;
     private SpriteRenderer _keyRenderer;
@@ -14,26 +14,30 @@ public class Interactable : MonoBehaviour
         Initialize();
         CreatedKey.SetActive(false);
     }
-    private void OnTriggerEnter2D(Collider2D collision)
+    public void TriggerEnter(Collider2D collision)
     {
         if(_hidden)
         {
             return;
         }
+        _keyRenderer.sprite = Key.SpriteTexture;
         CreatedKey.SetActive(true);
         OnTriggerEnter2DInternal(collision);
     }
-
-    private void OnTriggerExit2D(Collider2D collision)
+    
+    public void TriggerExit(Collider2D collision)
     {
         if (_hidden)
         {
             return;
         }
+        _keyRenderer.sprite = Key.SpriteTexture;
         CreatedKey.SetActive(false);
         OnTriggerExit2DInternal(collision);
     }
-    
+
+
+
     [ContextMenu("Initialize")]
     public void Initialize()
     {
@@ -61,15 +65,20 @@ public class Interactable : MonoBehaviour
         
     }
 
-    public void Click()
+    public bool IsHidden()
+    {
+        return _hidden;
+    }
+
+    public void OnClick()
     {
         _keyRenderer.sprite = Key.SpriteTexturePressed;
-        ClickInternal();
+        OnClickInternal();
     }
-    public void ClickExit()
+    public void OnClickExit()
     {
         _keyRenderer.sprite = Key.SpriteTexture;
-        ClickExitInternal();
+        OnClickExitInternal();
     }
 
     protected void HideKey()
@@ -80,8 +89,8 @@ public class Interactable : MonoBehaviour
 
     protected virtual void OnTriggerEnter2DInternal(Collider2D collision) { /* intenionally unimplemented */ }
     protected virtual void OnTriggerExit2DInternal(Collider2D collision) { /* intenionally unimplemented */ }
-    protected virtual void ClickInternal() { /* intenionally unimplemented */ }
-    protected virtual void ClickExitInternal() { /* intenionally unimplemented */ }
+    protected virtual void OnClickInternal() { /* intenionally unimplemented */ }
+    protected virtual void OnClickExitInternal() { /* intenionally unimplemented */ }
 
 
 
