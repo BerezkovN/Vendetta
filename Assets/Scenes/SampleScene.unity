@@ -313,10 +313,10 @@ MonoBehaviour:
   _cameraView: {fileID: 519420033}
   _beginDelay: 1
   _points:
-  - Delay: 6
-    Transform: {fileID: 295073168}
-  - Delay: 1
-    Transform: {fileID: 980433528}
+  - Transform: {fileID: 295073168}
+    Delay: 6
+  - Transform: {fileID: 980433528}
+    Delay: 1
   Finished:
     m_PersistentCalls:
       m_Calls:
@@ -414,7 +414,7 @@ Camera:
   m_Enabled: 1
   serializedVersion: 2
   m_ClearFlags: 2
-  m_BackGroundColor: {r: 0.19215687, g: 0.3019608, b: 0.4745098, a: 0}
+  m_BackGroundColor: {r: 0.23529412, g: 0.23529412, b: 0.23137255, a: 0}
   m_projectionMatrixMode: 1
   m_GateFitMode: 2
   m_FOVAxisMode: 0
