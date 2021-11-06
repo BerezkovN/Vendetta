@@ -7,6 +7,8 @@ public class PlayerMovement : MonoBehaviour
 {
     [SerializeField] private float _movementSpeed = 4;
 
+    [System.NonSerialized] public Vector3 directionVector = new Vector3(1, 0, 0);
+
     private Animator _animator;
 
     private float _lastMovementDirection;
@@ -36,6 +38,8 @@ public class PlayerMovement : MonoBehaviour
 
         _lastMovementDirection = direction;
 
-        transform.position = new Vector3(transform.position.x + direction * _movementSpeed * Time.deltaTime, transform.position.y, transform.position.z);
+
+
+        transform.Translate(directionVector.x * direction * _movementSpeed * Time.deltaTime, directionVector.y * direction * _movementSpeed * Time.deltaTime, 0);
     }
 }
