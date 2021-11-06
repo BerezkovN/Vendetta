@@ -84,6 +84,7 @@ public class Firefly : MonoBehaviour
 
     private Vector3 CalculatePosition(float t)
     {
+        t = Mathf.Clamp(t, 0, 1);
         float buf = t * _bezierLUT[LUTSize - 1];
         for (int i = 0; i < LUTSize - 1; i++)
         {
