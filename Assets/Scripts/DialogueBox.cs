@@ -32,10 +32,6 @@ public class DialogueBox : MonoBehaviour
     [SerializeField] TMP_Text continueTextField;
     private readonly Queue<TextData> _textQueue = new Queue<TextData>();
     private TextData? currentPair = null;
-    private void Start()
-    {
-
-    }
     private void Update()
     {
         if (_textQueue.Count > 0 && currentPair is null)
