@@ -5,7 +5,7 @@ using UnityEngine;
 [RequireComponent(typeof(Camera))]
 public class CameraView : MonoBehaviour
 {
-    [SerializeField] private float _dampTime = 0.15f;
+    [SerializeField] private float _dampTime = 0.3f;
     [SerializeField] private float _offsetX;
     [SerializeField] private float _offsetY;
     // from 0% to 50%, (50% means that border line should have size 50% from screen)
