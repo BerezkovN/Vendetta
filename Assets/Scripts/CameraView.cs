@@ -8,7 +8,8 @@ public class CameraView : MonoBehaviour
     [SerializeField] private float _dampTime = 0.15f;
     [SerializeField] private float _offsetX;
     [SerializeField] private float _offsetY;
-    [SerializeField, Range(0, 0.8f)] private float _borderSize = 0.05f;
+    // from 0% to 50%, (50% means that border line should have size 50% from screen)
+    [SerializeField, Range(0, 0.5f)] private float _borderSize = 0.05f;
     [SerializeField] private Transform _target;
 
     private Camera _camera;
