@@ -16,6 +16,12 @@ public class CameraView : MonoBehaviour
 
     private Vector3 velocity = Vector3.zero;
 
+    public Transform Target
+    {
+        get => _target;
+        set => _target = value;
+    }
+
     private void Start()
     {
         _camera = GetComponent<Camera>();
