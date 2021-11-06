@@ -9,13 +9,13 @@ public class Firefly : MonoBehaviour
     [SerializeField] float MaxDistance;
     [SerializeField] float DistanceDiff;
 
-    public float BaseRadius { get; set; } = 0.15f;
+    public float BaseRadius { get; set; } = 0.25f;
     private float deltaTime
     {
 
         get
         {
-            return (_seed + Time.realtimeSinceStartup - _timeBegin) * Velocity;
+            return (Time.realtimeSinceStartup - _timeBegin) * Velocity;
         }
     }
 
@@ -24,14 +24,15 @@ public class Firefly : MonoBehaviour
     private float _timeBegin;
     private List<Vector3> _bezierCurvePoints;
     private List<float> _bezierLUT;
-    private float _seed;
     private const int LUTSize = 100;
+    private float _seed;
 
     private void Start()
     {
-        _seed = Random.Range(0, 10);
+        _seed = 2 * Random.Range(0.0f, 1/Velocity);
         _bezierLUT = new List<float>(new float[LUTSize]);
         _light = gameObject.GetComponent<Light2D>();
+        _timeBegin = Time.realtimeSinceStartup + _seed;
 
         _bezierCurvePoints = new List<Vector3>();
         _bezierCurvePoints.Add(new Vector3(0, 0, 0));
@@ -43,13 +44,15 @@ public class Firefly : MonoBehaviour
 
     private void GenerateBezierCurve()
     {
-        float angle = Random.Range(0, 100);
+        _bezierCurvePoints[0] = gameObject.transform.localPosition;
+        float angle1 = Random.Range(0.0f, 1000.0f);
+        float buf1 = Random.Range(Random.Range(0, MaxDistance),3 * MaxDistance);
+        _bezierCurvePoints[1] = new Vector3(Mathf.Cos(angle1) * buf1, Mathf.Sin(angle1) * buf1);
+        float angle2 = Random.Range(0.0f, 1000.0f);
+        float buf2 = Random.Range(Random.Range(0, MaxDistance), 3 * MaxDistance);
+        _bezierCurvePoints[2] = new Vector3(Mathf.Cos(angle2) * buf2, Mathf.Sin(angle2) * buf2);
+        float angle = Random.Range(0.0f, 1000.0f);
         float dist = MaxDistance - Random.Range(0, DistanceDiff);
-        _bezierCurvePoints[0] = gameObject.transform.position;
-        float buf1 = Random.Range(0.25f, MaxDistance);
-        _bezierCurvePoints[1] = new Vector3(Mathf.Cos(angle) * buf1, Mathf.Sin(angle) * buf1);
-        float buf2 = Random.Range(0.25f, MaxDistance);
-        _bezierCurvePoints[2] = new Vector3(Mathf.Cos(angle) * buf2, Mathf.Sin(angle) * buf2);
         _bezierCurvePoints[3] = new Vector3(Mathf.Cos(angle) * dist, Mathf.Sin(angle) * dist);
 
         Vector3 buf = CalculatePosition(0);
@@ -81,13 +84,13 @@ public class Firefly : MonoBehaviour
 
     private Vector3 CalculatePosition(float t)
     {
-        float buf = _bezierLUT[LUTSize - 1];
+        float buf = t * _bezierLUT[LUTSize - 1];
         for (int i = 0; i < LUTSize - 1; i++)
         {
             if (_bezierLUT[i] < buf && buf < _bezierLUT[i + 1])
             {
                 float dist = _bezierLUT[i + 1] - _bezierLUT[i];
-                t = (float)i / LUTSize + Mathf.Lerp(0, dist, buf - _bezierLUT[i]);
+                t = (float)i / LUTSize + Mathf.Lerp(0, 1, (buf - _bezierLUT[i])/dist) / 100;
                 break;
             }
         }
@@ -99,9 +102,9 @@ public class Firefly : MonoBehaviour
         if (deltaTime > 1)
         {
             GenerateBezierCurve();
-            _timeBegin = _seed + Time.realtimeSinceStartup;
+            _timeBegin = Time.realtimeSinceStartup;
         }
-        gameObject.transform.position = CalculatePosition(deltaTime);
+        gameObject.transform.localPosition = CalculatePosition(deltaTime);
         _light.pointLightOuterRadius = BaseRadius + Mathf.Sin(_seed + Time.realtimeSinceStartup / 5) / 10;
     }
 }
