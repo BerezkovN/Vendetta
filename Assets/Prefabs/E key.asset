@@ -12,6 +12,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 72a0ea09dcdb81f40a60fa37b38bb5bf, type: 3}
   m_Name: E key
   m_EditorClassIdentifier: 
-  KeyName: e
+  KeyName: E Key Button
   SpriteTexture: {fileID: 21300000, guid: e2c3a38d6870a524384b4bf77e4ada0f, type: 3}
-  SpriteTexturePressed: {fileID: 21300000, guid: e2c3a38d6870a524384b4bf77e4ada0f, type: 3}
+  SpriteTexturePressed: {fileID: 21300000, guid: 39875154d46d70542a60cdf81b15b798, type: 3}
