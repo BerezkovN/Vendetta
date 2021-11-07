@@ -14,7 +14,20 @@ public class CameraEffects : MonoBehaviour
     private Bloom _bloom;
     private ColorAdjustments _colorAdjustments;
     private Vignette _vignette;
-
+    private readonly Queue<KeyValuePair<Color, float>> colorQueue = new Queue<KeyValuePair<Color, float>>();
+    private Color _baseLightColor;
+    private Color? _currentColor = null;
+    private float _colorEnd;
+    private Color? CurrentColor 
+    { 
+        get => _currentColor; 
+        set 
+        { 
+            _currentColor = value;  
+            if (value == null) { _bloom.tint.value = _baseLightColor; _bloom.threshold.value = 1; } 
+            else { _bloom.tint.value = value.Value; _bloom.threshold.value = 0.5f; } 
+        } 
+    }
     private void Start()
     {
         if(_light == null || _postProcessing == null)
@@ -24,15 +37,44 @@ public class CameraEffects : MonoBehaviour
         _postProcessing.profile.TryGet(out _bloom);
         _postProcessing.profile.TryGet(out _colorAdjustments);
         _postProcessing.profile.TryGet(out _vignette);
+        _baseLightColor = _bloom.tint.value;
     }
 
     private void Update()
     {
-        
+        if(_colorEnd < Time.realtimeSinceStartup)
+        {
+            _colorEnd = 0;
+            if(colorQueue.Count > 0)
+            {
+                _colorEnd = Time.realtimeSinceStartup;
+                KeyValuePair<Color, float> pair = colorQueue.Dequeue();
+                _vignette.intensity.value = 0.5f;
+                CurrentColor = pair.Key;
+                _colorEnd = pair.Value;
+            } 
+            else if(CurrentColor != null)
+            {
+                CurrentColor = null;
+                _vignette.intensity.value = 0;
+            }
+        }
     }
     public void SetExitFade(float t)
     {
-        _colorAdjustments.postExposure.value = 5*Mathf.Log10(1+t) + 1/(1+t) - 1 - 4 * t  * t;
+        _colorAdjustments.postExposure.value = 5 * Mathf.Log10(1 + t) + 1 / (1 + t) - 1 - 4 * t * t;
         _vignette.intensity.value = t;
+    }
+    public void OnTakingDamage()
+    {
+        
+    }
+    public void OnSilentKill()
+    {
+
+    }
+    public void OnHit()
+    {
+        colorQueue.Enqueue(new KeyValuePair<Color, float>(Color.red, Time.realtimeSinceStartup + 0.125f));
     }
 }
