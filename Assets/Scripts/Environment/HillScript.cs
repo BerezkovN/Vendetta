@@ -4,39 +4,27 @@ using UnityEngine;
 
 public class HillScript : MonoBehaviour
 {
-    [SerializeField] float Degrees;
+    private Vector3 hillDirectionVector;
+    private Vector3 pointA;
+    private Vector3 pointB;
 
-    private void OnTriggerEnter2D(Collider2D collision)
+    private void OnTriggerStay2D(Collider2D collision)
     {
         if (collision.tag == "Player")
         {
-            collision.gameObject.GetComponent<PlayerMovement>().directionVector = new Vector3(Mathf.Cos(Mathf.Deg2Rad * Degrees), Mathf.Sin(Mathf.Deg2Rad * Degrees), 0);
+            if (collision.gameObject.transform.position.x > pointA.x && collision.gameObject.transform.position.x < pointB.x)
+                collision.gameObject.GetComponent<PlayerMovement>().directionVector = hillDirectionVector;
+            else
+                collision.gameObject.GetComponent<PlayerMovement>().directionVector = new Vector3(1, 0, 0);
         }
-    }
-
-    private void OnTriggerExit2D(Collider2D collision)
-    {
-        collision.gameObject.GetComponent<PlayerMovement>().directionVector = new Vector3(1, 0, 0);
     }
 
     // Start is called before the first frame update
     void Start()
     {
-        GameObject Player = GameObject.FindGameObjectWithTag("Player");
-        if (Player == null)
-        {
-            Debug.LogError("Set player's tag to Player");
-        }
+        pointA = gameObject.transform.GetChild(0).position;
+        pointB = gameObject.transform.GetChild(1).position;
 
-        BoxCollider2D thisCollider = this.gameObject.GetComponent<BoxCollider2D>();
-        BoxCollider2D playerCollider = Player.GetComponent<BoxCollider2D>();
-
-        thisCollider.size = new Vector2(thisCollider.size.x - playerCollider.size.x, thisCollider.size.y);
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-        
+        hillDirectionVector = (pointB - pointA).normalized;
     }
 }
