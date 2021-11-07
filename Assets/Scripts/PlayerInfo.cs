@@ -6,14 +6,16 @@ using UnityEngine.Events;
 
 public class PlayerInfo : MonoBehaviour
 {
-    [SerializeField] private int _maxHealth = 3;
+    [SerializeField] private int _maxHealth = 100;
+    [SerializeField] private int _damage = 10;
 
     private int _health;
 
     public UnityEvent<int> HealthChanged;
     public UnityEvent PlayerDied;
 
-    public int MaxHelth => _maxHealth;
+    public int MaxHealth => _maxHealth;
+    public int Damage => _damage;
 
     public int Health
     {
@@ -49,6 +51,6 @@ public class PlayerInfo : MonoBehaviour
         if (heal <= 0)
             throw new ArgumentOutOfRangeException(nameof(heal));
 
-        Health = Mathf.Min(Health + heal, MaxHelth);
+        Health = Mathf.Min(Health + heal, MaxHealth);
     }
 }
