@@ -18,6 +18,7 @@ public class CameraEffects : MonoBehaviour
     private Color _baseLightColor;
     private Color? _currentColor = null;
     private float _colorEnd;
+    private CameraView _view;
     private Color? CurrentColor 
     { 
         get => _currentColor; 
@@ -38,6 +39,7 @@ public class CameraEffects : MonoBehaviour
         _postProcessing.profile.TryGet(out _colorAdjustments);
         _postProcessing.profile.TryGet(out _vignette);
         _baseLightColor = _bloom.tint.value;
+        _view = GetComponent<CameraView>();
     }
 
     private void Update()
@@ -67,7 +69,8 @@ public class CameraEffects : MonoBehaviour
     }
     public void OnTakingDamage()
     {
-        
+        colorQueue.Enqueue(new KeyValuePair<Color, float>(Color.red, Time.realtimeSinceStartup + 0.125f));
+        _view.ShakeCameraRoughly(0.1f, 2);
     }
     public void OnSilentKill()
     {
@@ -75,6 +78,6 @@ public class CameraEffects : MonoBehaviour
     }
     public void OnHit()
     {
-        colorQueue.Enqueue(new KeyValuePair<Color, float>(Color.red, Time.realtimeSinceStartup + 0.125f));
+
     }
 }

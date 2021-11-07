@@ -83,6 +83,6 @@ public class PlayerInteractions : MonoBehaviour
     public void TakeDamage(int damage)
     {
         _playerInfo.ApplyDamage(damage);
-        _cameraEffects.OnHit();
+        _cameraEffects.OnTakingDamage();
     }
 }
