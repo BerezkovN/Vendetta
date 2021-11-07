@@ -155,6 +155,7 @@ public class Enemy : Interactable
         gameObject.transform.position = gameObject.transform.position + new Vector3(0, -1, 0);
         gameObject.transform.rotation = Quaternion.Euler(0,0,-90);
         _light.color = Color.clear;
+        _light.enabled = false;
         // TODO
         // death animation
     }
