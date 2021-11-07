@@ -72,11 +72,19 @@ public class Interactable : MonoBehaviour
 
     public void OnClick(PlayerInfo playerInfo)
     {
+        if(_hidden)
+        {
+            return;
+        }
         _keyRenderer.sprite = Key.SpriteTexturePressed;
         OnClickInternal(playerInfo);
     }
     public void OnClickExit(PlayerInfo playerInfo)
     {
+        if (_hidden)
+        {
+            return;
+        }
         _keyRenderer.sprite = Key.SpriteTexture;
         OnClickExitInternal(playerInfo);
     }
