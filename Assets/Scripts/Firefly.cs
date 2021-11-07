@@ -29,7 +29,7 @@ public class Firefly : MonoBehaviour
 
     private void Start()
     {
-        _seed = Random.Range(0.0f, 1/Velocity);
+        _seed = Random.Range(0.0f, 0.25f);
         _bezierLUT = new List<float>(new float[LUTSize]);
         _light = gameObject.GetComponent<Light2D>();
         _timeBegin = Time.realtimeSinceStartup + _seed;
