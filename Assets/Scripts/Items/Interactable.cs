@@ -5,7 +5,7 @@ using UnityEngine;
 public class Interactable : MonoBehaviour
 {
     [SerializeField] public Key Key;
-    [SerializeField] private GameObject? CreatedKey;
+    [SerializeField] protected GameObject? CreatedKey;
 
     private bool _hidden = false;
     private SpriteRenderer _keyRenderer;
