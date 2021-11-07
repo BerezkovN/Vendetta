@@ -5,13 +5,16 @@ using UnityEngine;
 public class PlayerInteractions : MonoBehaviour
 {
     private Interactable? _currentTarget = null;
+    private PlayerInfo _playerInfo;
 
     private bool _pressed = false;
-    void Start()
-    {
-        
-    }
 
+    public bool Dead { get => _playerInfo.Health <= 0; }
+    public bool Alive { get => _playerInfo.Health > 0; }
+    private void Start()
+    {
+        _playerInfo = GetComponent<PlayerInfo>();
+    }
     void Update()
     {
         if (_currentTarget != null)
@@ -19,12 +22,12 @@ public class PlayerInteractions : MonoBehaviour
             if (Input.GetButtonDown(_currentTarget.Key.KeyName))
             {
                 _pressed = true;
-                _currentTarget.OnClick();
+                _currentTarget.OnClick(_playerInfo);
             }
             else if (_pressed && !Input.GetButton(_currentTarget.Key.KeyName))
             { 
                 _pressed = false;
-                _currentTarget.OnClickExit();
+                _currentTarget.OnClickExit(_playerInfo);
             }
         }
     }
@@ -54,4 +57,8 @@ public class PlayerInteractions : MonoBehaviour
         }
     }
 
+    public void TakeDamage(int damage)
+    {
+        _playerInfo.ApplyDamage(damage);
+    }
 }

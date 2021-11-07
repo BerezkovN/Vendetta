@@ -62,7 +62,7 @@ public class Interactable : MonoBehaviour
         {
             Destroy(buf);
         }
-        
+        InitializeInternal();
     }
 
     public bool IsHidden()
@@ -70,18 +70,18 @@ public class Interactable : MonoBehaviour
         return _hidden;
     }
 
-    public void OnClick()
+    public void OnClick(PlayerInfo playerInfo)
     {
         _keyRenderer.sprite = Key.SpriteTexturePressed;
-        OnClickInternal();
+        OnClickInternal(playerInfo);
     }
-    public void OnClickExit()
+    public void OnClickExit(PlayerInfo playerInfo)
     {
         _keyRenderer.sprite = Key.SpriteTexture;
-        OnClickExitInternal();
+        OnClickExitInternal(playerInfo);
     }
 
-    protected void HideKey()
+    protected void HideInteractionKey()
     {
         _hidden = true;
         CreatedKey.SetActive(false);
@@ -89,9 +89,8 @@ public class Interactable : MonoBehaviour
 
     protected virtual void OnTriggerEnter2DInternal(Collider2D collision) { /* intenionally unimplemented */ }
     protected virtual void OnTriggerExit2DInternal(Collider2D collision) { /* intenionally unimplemented */ }
-    protected virtual void OnClickInternal() { /* intenionally unimplemented */ }
-    protected virtual void OnClickExitInternal() { /* intenionally unimplemented */ }
-
-
+    protected virtual void OnClickInternal(PlayerInfo playerInfo) { /* intenionally unimplemented */ }
+    protected virtual void OnClickExitInternal(PlayerInfo playerInfo) { /* intenionally unimplemented */ }
+    protected virtual void InitializeInternal() { /* intenionally unimplemented */ }
 
 }
