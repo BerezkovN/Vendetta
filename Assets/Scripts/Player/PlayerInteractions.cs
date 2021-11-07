@@ -4,6 +4,8 @@ using UnityEngine;
 
 public class PlayerInteractions : MonoBehaviour
 {
+    [SerializeField] private CameraEffects _cameraEffects;
+ 
     private Interactable? _currentTarget = null;
     private PlayerInfo _playerInfo;
 
@@ -14,7 +16,12 @@ public class PlayerInteractions : MonoBehaviour
     private void Start()
     {
         _playerInfo = GetComponent<PlayerInfo>();
+        if(_cameraEffects == null)
+        {
+            throw new System.ArgumentNullException("_cameraEffects cannot be null!");
+        }
     }
+    float _escPressedEnd = 0;
     void Update()
     {
         if (_currentTarget != null)
@@ -29,6 +36,22 @@ public class PlayerInteractions : MonoBehaviour
                 _pressed = false;
                 _currentTarget.OnClickExit(_playerInfo);
             }
+        }
+        if (Input.GetButtonDown("Cancel"))
+        {
+            _escPressedEnd = Time.realtimeSinceStartup + 3;
+        } 
+        else if(Input.GetButton("Cancel"))
+        {
+            _cameraEffects.SetExitFade(1 - (_escPressedEnd - Time.realtimeSinceStartup) / 3);
+            if(_escPressedEnd < Time.realtimeSinceStartup)
+            {
+                Application.Quit();
+            }
+        } else
+        {
+            _escPressedEnd = 0;
+            _cameraEffects.SetExitFade(0);
         }
     }
     private void OnTriggerEnter2D(Collider2D collision)
