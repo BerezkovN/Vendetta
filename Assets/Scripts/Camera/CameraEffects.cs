@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class CameraEffects : MonoBehaviour
 {
-    [SerializeField] SpriteRenderer _canvasBlackSquare;
+    [SerializeField] UnityEngine.UI.Image _canvasBlackSquare;
     private void Start()
     {
         
