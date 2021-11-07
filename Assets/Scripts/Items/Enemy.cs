@@ -12,8 +12,8 @@ public class Enemy : Interactable
     [SerializeField] private int _baseSpeed = 5;
     [SerializeField] private int _fleeSpeed = 5;
     [SerializeField] private int _damage = 30;
-    [SerializeField] GameObject pointA;
-    [SerializeField] GameObject pointB;
+    [SerializeField] GameObject PointLeft;
+    [SerializeField] GameObject PointRight;
 
 
     // Internal state of the object, if the player was spotted then we should 
@@ -38,7 +38,7 @@ public class Enemy : Interactable
     private void Start()
     {
         Health = _baseHealth;
-        if(pointA == null || pointB == null)
+        if(PointLeft == null || PointRight == null)
         {
             throw new System.ArgumentNullException("Neither pointLeft nor pointRight should be null");
         }
@@ -48,10 +48,10 @@ public class Enemy : Interactable
         }
         if(Random.Range(0,2)  < 1)
         {
-            Target = pointA;
+            Target = PointLeft;
         } else
         {
-            Target = pointB;
+            Target = PointRight;
         }
     }
     private void Update()
@@ -147,13 +147,13 @@ public class Enemy : Interactable
     }
     private void Patrol()
     {
-        if (pointA.transform.position.x > transform.position.x)
+        if (PointLeft.transform.position.x > transform.position.x)
         {
-            Target = pointB;
+            Target = PointRight;
         } 
-        else if (pointB.transform.position.x < transform.position.x)
+        else if (PointRight.transform.position.x < transform.position.x)
         {
-            Target = pointA;
+            Target = PointLeft;
         }
     }
     private void Move()
