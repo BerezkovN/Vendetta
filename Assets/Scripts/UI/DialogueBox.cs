@@ -4,6 +4,7 @@ using System.Linq;
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.UIElements.Experimental;
+using UnityEngine.EventSystems;
 using TMPro;
 
 public class DialogueBox : MonoBehaviour
@@ -32,6 +33,10 @@ public class DialogueBox : MonoBehaviour
     [SerializeField] TMP_Text continueTextField;
     private readonly Queue<TextData> _textQueue = new Queue<TextData>();
     private TextData? currentPair = null;
+    private void Start()
+    {
+        GetComponent<Button>().onClick.AddListener(ButtonClicked);
+    }
     private void Update()
     {
         if (_textQueue.Count > 0 && currentPair is null)
@@ -45,7 +50,7 @@ public class DialogueBox : MonoBehaviour
             continueTextField.alpha = 4 * Mathf.Clamp01((currentPair.DeltaTime - currentPair.lockTime - currentPair.timeToShow) / (currentPair.timeToShow + currentPair.lockTime));
         }
     }
-    private void OnMouseDown()
+    public void ButtonClicked()
     {
         if (!(currentPair is null))
         {
@@ -56,6 +61,9 @@ public class DialogueBox : MonoBehaviour
             {
                 Skip();
             }
+        } else
+        {
+            Skip();
         }
     }
 
