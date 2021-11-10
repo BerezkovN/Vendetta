@@ -6,6 +6,7 @@ public class Interactable : MonoBehaviour
 {
     [SerializeField] public Key Key;
     [SerializeField] protected GameObject? CreatedKey;
+    [SerializeField] int OrderInLayer = 1;
 
     private bool _hidden = false;
     private SpriteRenderer _keyRenderer;
@@ -14,6 +15,19 @@ public class Interactable : MonoBehaviour
         Initialize();
         CreatedKey.SetActive(false);
     }
+
+    public void HideKey()
+    {
+        _hidden = true;
+        CreatedKey.SetActive(false);
+    }
+
+    public void ShowKey()
+    {
+        _hidden = false;
+        CreatedKey.SetActive(true);
+    }
+
     public void TriggerEnter(Collider2D collision)
     {
         if(_hidden)
@@ -48,6 +62,7 @@ public class Interactable : MonoBehaviour
             CreatedKey.transform.parent = gameObject.transform;
             _keyRenderer = CreatedKey.AddComponent<SpriteRenderer>();
             _keyRenderer.sprite = Key.SpriteTexture;
+            _keyRenderer.sortingOrder = OrderInLayer;
             if (buf != null)
             {
                 CreatedKey.transform.position = buf.transform.position;

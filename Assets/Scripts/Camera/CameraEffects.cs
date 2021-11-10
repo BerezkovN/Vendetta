@@ -18,7 +18,7 @@ public class CameraEffects : MonoBehaviour
     private Color _baseLightColor;
     private Color? _currentColor = null;
     private float _colorEnd;
-    private CameraView _view;
+    public CameraView _view;
     private Color? CurrentColor 
     { 
         get => _currentColor; 
@@ -78,6 +78,6 @@ public class CameraEffects : MonoBehaviour
     }
     public void OnHit()
     {
-
+        _view.ShakeCameraRoughly(0.1f, 0.5f);
     }
 }

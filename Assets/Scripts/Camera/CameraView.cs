@@ -84,6 +84,7 @@ public class CameraView : MonoBehaviour
             }
             else if (Time.time <= _smoothTimeoutTimestamp)
             {
+
                 _originalPos = Vector3.SmoothDamp(_originalPos, destination, ref velocity2, _delay);
                 Vector3 shakeDestination = _originalPos + new Vector3(0, Mathf.Sin(Time.realtimeSinceStartup * _verticalShakeSpeed)) * _verticalShakePower;
                 shakeDestination.z = _originalPos.z;

@@ -12,10 +12,11 @@ public class HillScript : MonoBehaviour
     {
         if (collision.tag == "Player")
         {
+            //Make method ChangeDirection so I don't have to call every frame, but I don't have time so govnocode for life.
             if (collision.gameObject.transform.position.x > pointA.x && collision.gameObject.transform.position.x < pointB.x)
-                collision.gameObject.GetComponent<PlayerMovement>().directionVector = hillDirectionVector;
+                collision.gameObject.GetComponent<Movement>().directionVector = hillDirectionVector;
             else
-                collision.gameObject.GetComponent<PlayerMovement>().directionVector = new Vector3(1, 0, 0);
+                collision.gameObject.GetComponent<Movement>().directionVector = new Vector3(1, 0, 0);
         }
     }
 

@@ -6,7 +6,8 @@ using UnityEngine.Experimental.Rendering.Universal;
 public class Enemy : Interactable
 {
     // Amount of time the enemy will search for the player
-    [SerializeField] private int _attentionSpan = 30;
+    [SerializeField] private float _reachDistance = 1;
+    [SerializeField] private float _verticalReachDistance = 8;
     [SerializeField] private int _alertRange = 8;
     [SerializeField] private int _fightStart = 6;
     [SerializeField] private int _enemyCommunicationRadius = 6;
@@ -30,7 +31,6 @@ public class Enemy : Interactable
     // random value, if false then the enemy will try to flee away
     private bool _brave = false;
     private float _health;
-    private float _currentSpeed;
     // false for left, true for right
     private bool _lastMovementDirection;
     // position & time
@@ -50,6 +50,9 @@ public class Enemy : Interactable
     public bool Fighting { get => _fighting; set { _fighting = value; UpdateColor(); } }
 
     private GameObject Target { get; set; }
+    private Movement Animations { get; set; }
+    // only set when player was seen
+    private PlayerInteractions Player { get; set; }
 
     private void Start()
     {
@@ -63,13 +66,7 @@ public class Enemy : Interactable
         {
             _brave = true;
         }
-        if(Random.Range(0,2)  < 1)
-        {
-            Target = _pointLeft;
-        } else
-        {
-            Target = _pointRight;
-        }
+        Animations = GetComponent<Movement>();
     }
     private void Update()
     {
@@ -123,7 +120,16 @@ public class Enemy : Interactable
 
     protected override void OnClickInternal(PlayerInfo playerInfo)
     {
-        Health -= playerInfo.Damage;
+        if (!_fighting)
+        {
+            Health = -100;
+            playerInfo.GetComponent<PlayerInteractions>().StealthAttack();
+        }
+        else
+        {
+            Health -= playerInfo.Damage;
+            playerInfo.GetComponent<PlayerInteractions>().Attack();
+        }
     }
 
     protected override void InitializeInternal()
@@ -152,41 +158,77 @@ public class Enemy : Interactable
     {
         Dead = true;
         HideInteractionKey();
-        gameObject.transform.position = gameObject.transform.position + new Vector3(0, -1, 0);
-        gameObject.transform.rotation = Quaternion.Euler(0,0,-90);
         _light.color = Color.clear;
         _light.enabled = false;
-        // TODO
-        // death animation
+        Animations.CallState(Movement.States.Die);
     }
     private void Fight()
     {
-        // TODO
-        // animation of fighting the player.
-        // fighting logic
+        if(Player.Dead)
+        {
+            _fighting = false;
+            _stunEnd = 0;
+            _timeStandingEnd = 0;
+            _alertFocusBuf = new KeyValuePair<Vector3, float>(Vector3.zero, 0);
+            return;
+        }
+        if (_stunEnd < Time.realtimeSinceStartup)
+        {
+            if (Mathf.Abs(Player.transform.position.x - transform.position.x) > _reachDistance)
+            {
+                Target = Player.gameObject;
+                _moving = true;
+            }
+            else
+            {
+                if (Mathf.Abs(Player.transform.position.x - transform.position.x) < _reachDistance &&
+                    Mathf.Abs(Player.transform.position.y - transform.position.y) < _verticalReachDistance)
+                {
+                    Animations.CallState(Movement.States.Attack);
+                    Player.TakeDamage(_damage);
+                    _moving = false;
+                    _stunEnd = Time.realtimeSinceStartup + 1.0f;
+                } else
+                {
+                    _moving = false;
+                    _stunEnd = Time.realtimeSinceStartup + 0.125f;
+                }
+            }
+        }
+        if (_moving)
+        {
+            Move();
+        }
+        else
+        {
+            Animations.CallState(Movement.States.NotRun);
+        }
     }
     private void Flee()
     {
-        // flee logic, the enemy should somehow hide from player though
-
-
+        if (Player.Alive)
+        {
+            Animations.CallState(Movement.States.Run);
+        }
+        else
+        {
+            Animations.CallState(Movement.States.Walk);
+        }
         Move();
     }
 
     private KeyValuePair<Vector3, float> _alertFocusBuf = new KeyValuePair<Vector3, float>(Vector3.zero, 0);
     private float _timeStandingEnd = 0;
+    
     private void Patrol()
     {
-        if(_alerted)
+        if (_alerted && _alertFocusBuf.Key != _alertFocus.Key)
         {
-            if(_alertFocusBuf.Key != _alertFocus.Key)
-            {
-                _pointLeft.transform.position = new Vector3(-10 + Random.Range(-2.5f, 7.5f), 0, 0) + _alertFocus.Key;
-                _pointRight.transform.position = new Vector3(10 + Random.Range(-7.5f, 2.5f), 0, 0) + _alertFocus.Key;
+            _pointLeft.transform.position = new Vector3(-10 + Random.Range(-2.5f, 7.5f), 0, 0) + _alertFocus.Key;
+            _pointRight.transform.position = new Vector3(10 + Random.Range(-7.5f, 2.5f), 0, 0) + _alertFocus.Key;
 
-                _alertFocusBuf = _alertFocus;
-                _timeStandingEnd = Time.realtimeSinceStartup;
-            }
+            _alertFocusBuf = _alertFocus;
+            _timeStandingEnd = Time.realtimeSinceStartup;
         }
         GameObject? target = null;
         if (_pointLeft.transform.position.x > transform.position.x)
@@ -197,7 +239,22 @@ public class Enemy : Interactable
         {
             target = _pointLeft;
         }
-        if (target != null)
+        else if(Target != _pointLeft && Target != _pointRight)
+        {
+            if (Random.Range(0, 2) < 1)
+            {
+                target = _pointLeft;
+            }
+            else
+            {
+                target = _pointRight;
+            }
+        }
+        if (Target == null)
+        {
+            Target = target;
+        } 
+        else if (target != null)
         {
             if (_moving && Mathf.Abs(Target.transform.position.x - gameObject.transform.position.x) < 1.0f)
             {
@@ -218,6 +275,10 @@ public class Enemy : Interactable
         {
             Move();
         }
+        else
+        {
+            Animations.CallState(Movement.States.NotRun);
+        }
 
     }
     private void Move()
@@ -226,15 +287,11 @@ public class Enemy : Interactable
         if(direction != _lastMovementDirection)
         {
             _lastMovementDirection = direction;
-            transform.localScale = new Vector3(direction ? -1 : 1, transform.localScale.y, transform.localScale.x);
             // mirror the key
-            CreatedKey.transform.localScale = new Vector3(direction ? -1 : 1, transform.localScale.y, transform.localScale.x);
+            CreatedKey.transform.localScale = new Vector3(direction ? -1 : 1, transform.localScale.y, transform.localScale.z);
         }
-        Vector3 vec = direction ? Vector2.right : Vector2.left;
-        vec = vec * Speed * Time.deltaTime;
-        transform.Translate(vec);
-        // TODO
-        // move || run animation ?
+        Animations.SetMovementSpeed(Speed);
+        Animations.Move(direction ? 1 : -1);
     }
 
     // communicate with the teammate within communication range
@@ -265,6 +322,7 @@ public class Enemy : Interactable
             if (dist < _fightStart)
             {
                 Fighting = true;
+                Player = player;
             }
             else if (dist < _alertRange) { 
                 _alertFocus = new KeyValuePair<Vector3, float>(player.transform.position, Time.realtimeSinceStartup);
